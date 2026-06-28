@@ -7,10 +7,10 @@ interface Props {
 
 export default function StreakBadge({ label, emoji, count, color }: Props) {
   return (
-    <div className={`rounded-2xl p-4 text-center ${color}`}>
+    <div className={`rounded-2xl p-4 text-center border border-zinc-800 ${color}`}>
       <div className="text-3xl mb-1">{emoji}</div>
       <div className="text-2xl font-bold">{count}</div>
-      <div className="text-xs font-medium mt-1 opacity-70">{label}</div>
+      <div className="text-xs font-medium mt-1 opacity-60">{label}</div>
     </div>
   )
 }

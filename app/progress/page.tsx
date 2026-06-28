@@ -24,10 +24,7 @@ export default function ProgressPage() {
 
   useEffect(() => {
     fetch('/api/progress')
-      .then(r => {
-        if (r.status === 401) { router.push('/setup'); return null }
-        return r.json()
-      })
+      .then(r => { if (r.status === 401) { router.push('/setup'); return null } return r.json() })
       .then(data => {
         if (!data) return
         setWeights(data.weights)
@@ -52,26 +49,27 @@ export default function ProgressPage() {
     arms: Number(m.arms_cm),
   }))
 
+  const tooltipStyle = {
+    backgroundColor: '#18181b',
+    border: '1px solid #3f3f46',
+    borderRadius: '12px',
+    color: '#f4f4f5',
+  }
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-rose-50">
-        <p className="text-rose-400">Loading progress...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f]">
+        <p className="text-zinc-500">Loading progress...</p>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-rose-50 pb-24">
-      {/* Header */}
-      <div className="bg-white shadow-sm px-6 py-4 sticky top-0 z-10">
+    <div className="min-h-screen bg-[#0f0f0f] pb-24">
+      <div className="bg-zinc-900 border-b border-zinc-800 px-6 py-4 sticky top-0 z-10">
         <div className="max-w-lg mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-800">📈 Your Progress</h1>
-          <button
-            onClick={() => router.push('/home')}
-            className="text-rose-500 font-medium text-sm"
-          >
-            ← Home
-          </button>
+          <h1 className="text-xl font-bold text-white">📈 Your Progress</h1>
+          <button onClick={() => router.push('/home')} className="text-rose-400 font-medium text-sm">← Home</button>
         </div>
       </div>
 
@@ -79,90 +77,55 @@ export default function ProgressPage() {
 
         {/* Streaks */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3 px-1">
-            Streaks
-          </h2>
+          <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3 px-1">Streaks</p>
           <div className="grid grid-cols-2 gap-3">
-            <StreakBadge
-              label="Day Streak"
-              emoji="🔥"
-              count={streak}
-              color="bg-orange-100 text-orange-700"
-            />
-            <StreakBadge
-              label="Total Days Logged"
-              emoji="📅"
-              count={totalDays}
-              color="bg-rose-100 text-rose-700"
-            />
-            <StreakBadge
-              label="Water Goal Streak"
-              emoji="💧"
-              count={waterStreak}
-              color="bg-blue-100 text-blue-700"
-            />
-            <StreakBadge
-              label="Steps Goal Streak"
-              emoji="👟"
-              count={stepsStreak}
-              color="bg-green-100 text-green-700"
-            />
+            <StreakBadge label="Day Streak" emoji="🔥" count={streak} color="bg-zinc-900 text-orange-400" />
+            <StreakBadge label="Total Days" emoji="📅" count={totalDays} color="bg-zinc-900 text-rose-400" />
+            <StreakBadge label="Water Goal" emoji="💧" count={waterStreak} color="bg-zinc-900 text-blue-400" />
+            <StreakBadge label="Steps Goal" emoji="👟" count={stepsStreak} color="bg-zinc-900 text-green-400" />
           </div>
         </div>
 
-        {/* Weight Chart */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <h2 className="font-semibold text-gray-700 mb-4">⚖️ Weight (kg)</h2>
+        {/* Weight chart */}
+        <div className="bg-zinc-900 rounded-2xl p-4 border border-zinc-800">
+          <h2 className="font-semibold text-white mb-4">⚖️ Weight (kg)</h2>
           {weightData.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-gray-300">
+            <div className="flex flex-col items-center justify-center py-10 text-zinc-600">
               <p className="text-4xl mb-2">⚖️</p>
               <p className="text-sm">No weight entries yet</p>
-              <p className="text-xs">Weight is logged every 3 days</p>
+              <p className="text-xs">Logged every 3 days</p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={weightData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis
-                  tick={{ fontSize: 11 }}
-                  domain={['auto', 'auto']}
-                />
-                <Tooltip
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="weight"
-                  stroke="#f43f5e"
-                  strokeWidth={2.5}
-                  dot={{ fill: '#f43f5e', r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#71717a' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#71717a' }} domain={['auto', 'auto']} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Line type="monotone" dataKey="weight" stroke="#f43f5e"
+                  strokeWidth={2.5} dot={{ fill: '#f43f5e', r: 4 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           )}
         </div>
 
-        {/* Measurements Chart */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <h2 className="font-semibold text-gray-700 mb-4">📏 Body Measurements (cm)</h2>
+        {/* Measurements chart */}
+        <div className="bg-zinc-900 rounded-2xl p-4 border border-zinc-800">
+          <h2 className="font-semibold text-white mb-4">📏 Measurements (cm)</h2>
           {measurementData.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-gray-300">
+            <div className="flex flex-col items-center justify-center py-10 text-zinc-600">
               <p className="text-4xl mb-2">📏</p>
               <p className="text-sm">No measurements yet</p>
-              <p className="text-xs">Measurements logged every 7 days</p>
+              <p className="text-xs">Logged every 7 days</p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={measurementData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} domain={['auto', 'auto']} />
-                <Tooltip
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                />
-                <Legend />
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#71717a' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#71717a' }} domain={['auto', 'auto']} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Legend wrapperStyle={{ color: '#a1a1aa', fontSize: 12 }} />
                 <Line type="monotone" dataKey="waist" stroke="#a855f7" strokeWidth={2} dot={{ r: 3 }} />
                 <Line type="monotone" dataKey="hips" stroke="#ec4899" strokeWidth={2} dot={{ r: 3 }} />
                 <Line type="monotone" dataKey="arms" stroke="#06b6d4" strokeWidth={2} dot={{ r: 3 }} />
